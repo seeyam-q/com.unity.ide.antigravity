@@ -1,4 +1,4 @@
-﻿/*---------------------------------------------------------------------------------------------
+/*---------------------------------------------------------------------------------------------
  *  Copyright (c) Google. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
@@ -71,11 +71,11 @@ namespace Google.Unity.Antigravity.Editor
 		private static bool IsCandidateForDiscovery(string path)
 		{
 #if UNITY_EDITOR_OSX
-			return Directory.Exists(path) && Regex.IsMatch(path, ".*Antigravity.*.app$", RegexOptions.IgnoreCase);
+			return Directory.Exists(path) && Regex.IsMatch(path, ".*Antigravity IDE.*.app$", RegexOptions.IgnoreCase);
 #elif UNITY_EDITOR_WIN
-			return File.Exists(path) && Regex.IsMatch(path, ".*antigravity.*.exe$", RegexOptions.IgnoreCase);
+			return File.Exists(path) && Regex.IsMatch(path, ".*Antigravity IDE.*.exe$", RegexOptions.IgnoreCase);
 #else
-			return File.Exists(path) && path.EndsWith("antigravity", StringComparison.OrdinalIgnoreCase);
+			return File.Exists(path) && path.EndsWith("antigravity-ide", StringComparison.OrdinalIgnoreCase);
 #endif
 		}
 
@@ -136,7 +136,7 @@ namespace Google.Unity.Antigravity.Editor
 			installation = new AntigravityInstallation()
 			{
 				IsPrerelease = isPrerelease,
-				Name = "Antigravity" + (isPrerelease ? " - Insider" : string.Empty) + (version != null ? $" [{version.ToString(3)}]" : string.Empty),
+				Name = "Antigravity IDE" + (isPrerelease ? " - Insider" : string.Empty) + (version != null ? $" [{version.ToString(3)}]" : string.Empty),
 				Path = editorPath,
 				Version = version ?? new Version()
 			};
@@ -153,16 +153,21 @@ namespace Google.Unity.Antigravity.Editor
 			var programFiles = IOPath.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles));
 
 			foreach (var basePath in new[] { localAppPath, programFiles }) {
-				candidates.Add(IOPath.Combine(basePath, "antigravity", "antigravity.exe"));
+				candidates.Add(IOPath.Combine(basePath, "Antigravity IDE", "Antigravity IDE.exe"));
 			}
 #elif UNITY_EDITOR_OSX
-			var appPath = IOPath.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles));
-			candidates.AddRange(Directory.EnumerateDirectories(appPath, "Antigravity*.app"));
+			var appPath = "/Applications";
+			candidates.AddRange(Directory.EnumerateDirectories(appPath, "Antigravity IDE*.app"));
+			var programFiles = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
+			if (!string.IsNullOrEmpty(programFiles) && Directory.Exists(programFiles))
+			{
+				candidates.AddRange(Directory.EnumerateDirectories(programFiles, "Antigravity IDE*.app"));
+			}
 #elif UNITY_EDITOR_LINUX
 			// Well known locations
-			candidates.Add("/usr/bin/antigravity");
-			candidates.Add("/bin/antigravity");
-			candidates.Add("/usr/local/bin/antigravity");
+			candidates.Add("/usr/bin/antigravity-ide");
+			candidates.Add("/bin/antigravity-ide");
+			candidates.Add("/usr/local/bin/antigravity-ide");
 
 			// Preference ordered base directories relative to which desktop files should be searched
 			candidates.AddRange(GetXdgCandidates());
@@ -518,13 +523,13 @@ namespace Google.Unity.Antigravity.Editor
 
 			// Get process name list based on different operating systems
 #if UNITY_EDITOR_OSX
-			processes.AddRange(Process.GetProcessesByName("Antigravity"));
-			processes.AddRange(Process.GetProcessesByName("Antigravity Helper"));
+			processes.AddRange(Process.GetProcessesByName("Antigravity IDE"));
+			processes.AddRange(Process.GetProcessesByName("Antigravity IDE Helper"));
 #elif UNITY_EDITOR_LINUX
-			processes.AddRange(Process.GetProcessesByName("antigravity"));
-			processes.AddRange(Process.GetProcessesByName("Antigravity"));
+			processes.AddRange(Process.GetProcessesByName("antigravity-ide"));
+			processes.AddRange(Process.GetProcessesByName("Antigravity IDE"));
 #else
-			processes.AddRange(Process.GetProcessesByName("antigravity"));
+			processes.AddRange(Process.GetProcessesByName("Antigravity IDE"));
 #endif
 
 			foreach (var process in processes)
@@ -559,7 +564,7 @@ namespace Google.Unity.Antigravity.Editor
 				}
 				catch (Exception ex)
 				{
-					Debug.LogError($"[Antigravity] Error checking process: {ex}");
+					Debug.LogError($"[Antigravity IDE] Error checking process: {ex}");
 					continue;
 				}
 			}
@@ -603,7 +608,7 @@ namespace Google.Unity.Antigravity.Editor
 					}
 					catch (Exception ex)
 					{
-						Debug.LogError($"[Antigravity] Error using existing instance: {ex}");
+						Debug.LogError($"[Antigravity IDE] Error using existing instance: {ex}");
 					}
 				}
 			}

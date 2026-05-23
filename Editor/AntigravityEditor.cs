@@ -111,7 +111,7 @@ namespace Google.Unity.Antigravity.Editor
 			if (installation is AntigravityInstallation)
 			{
 				var reuseWindow = EditorPrefs.GetBool(AntigravityInstallation.ReuseExistingWindowKey, false);
-				var newReuseWindow = EditorGUILayout.Toggle(new GUIContent("Reuse existing Antigravity window", "When enabled, opens files in an existing Antigravity window if found. When disabled, always opens a new window."), reuseWindow);
+				var newReuseWindow = EditorGUILayout.Toggle(new GUIContent("Reuse existing Antigravity IDE window", "When enabled, opens files in an existing Antigravity IDE window if found. When disabled, always opens a new window."), reuseWindow);
 				if (newReuseWindow != reuseWindow)
 					EditorPrefs.SetBool(AntigravityInstallation.ReuseExistingWindowKey, newReuseWindow);
 				
@@ -203,7 +203,7 @@ namespace Google.Unity.Antigravity.Editor
 			var editorPath = CodeEditor.CurrentEditorInstallation;
 
 			if (!Discovery.TryDiscoverInstallation(editorPath, out var installation)) {
-				Debug.LogWarning($"Antigravity executable {editorPath} is not found. Please change your settings in Edit > Preferences > External Tools.");
+				Debug.LogWarning($"Antigravity IDE executable {editorPath} is not found. Please change your settings in Edit > Preferences > External Tools.");
 				return false;
 			}
 
